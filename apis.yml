@@ -1,7 +1,24 @@
 aid: spocket
+accessModel:
+  pricing: unknown
+  onboarding: unknown
+  trial: false
+  try_now: false
+  public: false
+  label: Unknown
+  confidence: low
+  source: []
+  generated: '2026-07-22'
+  method: derived
+image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/icons/spocket.png
 name: Spocket
-description: Spocket is a company surfaced as a portfolio company of techstars and added to the API Evangelist
-  network as a stub for enrichment. This profile is a lead awaiting the enrichment pipeline.
+description: Spocket is a dropshipping platform that connects online retailers with vetted US and EU
+  suppliers to source, import, and sell products with faster shipping. It provides automated order
+  fulfillment, real-time inventory and price sync, branded invoicing, and one-click product import
+  into e-commerce stores through prebuilt platform integrations for Shopify, WooCommerce, Wix,
+  BigCommerce, Squarespace, Ecwid, Amazon, and eBay. Spocket serves over 500,000 entrepreneurs. At
+  the time of profiling it publishes no public developer API or developer program; connectivity is
+  delivered through its platform-specific storefront apps rather than a documented REST API.
 url: https://raw.githubusercontent.com/api-evangelist/spocket/refs/heads/main/apis.yml
 x-type: company
 x-source: vc-portfolio
@@ -11,9 +28,16 @@ x-tier: stub
 x-tier-reason: portfolio-lead
 specificationVersion: '0.20'
 created: '2026-07-17'
-modified: '2026-07-17'
+modified: '2026-07-21'
 tags:
 - Company
+- Dropshipping
+- E-commerce
+- Order Fulfillment
+- Product Sourcing
+- Suppliers
+- Retail
+- Marketplace
 apis: []
 maintainers:
 - FN: Kin Lane
@@ -21,5 +45,24 @@ maintainers:
 - FN: APIs.json
   email: info@apis.io
 common:
+- type: DomainSecurity
+  url: security/spocket-domain-security.yml
 - type: Website
   url: https://spocket.co/
+- type: Pricing
+  url: https://www.spocket.co/pricing
+- type: Blog
+  url: https://www.spocket.co/blog
+- type: Support
+  url: https://help.spocket.co/en/
+- type: TermsOfService
+  url: https://www.spocket.co/terms-of-service
+- type: PrivacyPolicy
+  url: https://www.spocket.co/privacy-policy
+- type: SignUp
+  url: https://app.spocket.co/signup
+x-enrichment:
+  date: '2026-07-21'
+  status: minimal
+  artifacts_added: 1
+  pass: local-v1
