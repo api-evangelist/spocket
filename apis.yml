@@ -1,68 +1,72 @@
-aid: spocket
-accessModel:
-  pricing: unknown
-  onboarding: unknown
-  trial: false
-  try_now: false
-  public: false
-  label: Unknown
-  confidence: low
-  source: []
-  generated: '2026-07-22'
-  method: derived
-image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/icons/spocket.png
 name: Spocket
-description: Spocket is a dropshipping platform that connects online retailers with vetted US and EU
-  suppliers to source, import, and sell products with faster shipping. It provides automated order
-  fulfillment, real-time inventory and price sync, branded invoicing, and one-click product import
-  into e-commerce stores through prebuilt platform integrations for Shopify, WooCommerce, Wix,
-  BigCommerce, Squarespace, Ecwid, Amazon, and eBay. Spocket serves over 500,000 entrepreneurs. At
-  the time of profiling it publishes no public developer API or developer program; connectivity is
-  delivered through its platform-specific storefront apps rather than a documented REST API.
-url: https://raw.githubusercontent.com/api-evangelist/spocket/refs/heads/main/apis.yml
-x-type: company
-x-source: vc-portfolio
-x-backed-by:
-- techstars
-x-tier: stub
-x-tier-reason: portfolio-lead
-specificationVersion: '0.20'
-created: '2026-07-17'
-modified: '2026-07-21'
+description: >-
+  Agent-native deployment/hosting platform. An AI coding agent ships a folder over MCP and it runs 24/7 with HTTPS URLs
+  and custom domains. Supports Discord/Slack/Telegram/Twitch bots, web apps/APIs, static sites, scrapers, queue
+  consumers and cron jobs on Node 22 and Python 3.11. No CLI, Dockerfile, or YAML.
+url: https://spocket.apievangelist.com/apis.yml
+created: '2026-08-07'
+modified: '2026-08-07'
+specificationVersion: '0.21'
 tags:
-- Company
-- Dropshipping
-- E-commerce
-- Order Fulfillment
-- Product Sourcing
-- Suppliers
-- Retail
-- Marketplace
-apis: []
+  - PaaS
+  - application-hosting
+  - bot-hosting
+  - developer-tools
+  - agent-infrastructure
+  - MCP
+  - deployment
+  - serverless
+  - always-on
+apis:
+  - name: Spocket MCP Server
+    description: >-
+      Hosted MCP server (Streamable HTTP) with ~20 tools for deploying and managing always-on apps. Uses OAuth 2.1 with
+      PKCE and dynamic client registration; usable by any account holder from Claude Code, Cursor, Codex, and other MCP
+      clients.
+    humanURL: https://www.spocket.dev/mcp
+    baseURL: https://www.spocket.dev/api/mcp
+    tags:
+      - PaaS
+      - application-hosting
+      - bot-hosting
+      - developer-tools
+      - agent-infrastructure
+      - MCP
+      - deployment
+      - serverless
+      - always-on
+    properties:
+      - type: MCP
+        url: https://www.spocket.dev/api/mcp
+      - type: Documentation
+        url: https://www.spocket.dev/documentation/mcp-tools
+      - type: LLMSTxt
+        url: https://www.spocket.dev/llms.txt
+  - name: Spocket Platform REST API
+    description: >-
+      White-label reseller/provisioning REST API for hosting apps from a customer backend. OAuth2 client-credentials
+      auth; endpoints for apps, power control, logs, sub-accounts and account. Gated behind the paid Fleet plan.
+      Documented in prose only; no machine-readable spec published.
+    humanURL: https://www.spocket.dev/documentation/platform-api
+    baseURL: https://www.spocket.dev/api/v1
+    tags:
+      - PaaS
+      - application-hosting
+      - bot-hosting
+      - developer-tools
+      - agent-infrastructure
+      - MCP
+      - deployment
+      - serverless
+      - always-on
+    properties:
+      - type: Documentation
+        url: https://www.spocket.dev/documentation/platform-api
 maintainers:
-- FN: Kin Lane
-  email: kin@apievangelist.com
-- FN: APIs.json
-  email: info@apis.io
-common:
-- type: DomainSecurity
-  url: security/spocket-domain-security.yml
-- type: Website
-  url: https://spocket.co/
-- type: Pricing
-  url: https://www.spocket.co/pricing
-- type: Blog
-  url: https://www.spocket.co/blog
-- type: Support
-  url: https://help.spocket.co/en/
-- type: TermsOfService
-  url: https://www.spocket.co/terms-of-service
-- type: PrivacyPolicy
-  url: https://www.spocket.co/privacy-policy
-- type: SignUp
-  url: https://app.spocket.co/signup
-x-enrichment:
-  date: '2026-07-21'
-  status: minimal
-  artifacts_added: 1
-  pass: local-v1
+  - FN: Spocket
+    url: https://www.spocket.dev
+generated:
+  by: apis.io/add
+  model: claude-opus-4-8
+  confidence: 95
+  at: '2026-08-07T13:16:36.489Z'
