@@ -1,0 +1,92 @@
+generated: '2026-08-09'
+method: searched
+source: https://www.spocket.dev/documentation/platform-api
+docs:
+  - https://www.spocket.dev/documentation/platform-api
+  - https://www.spocket.dev/documentation/quickstart
+  - https://www.spocket.dev/.well-known/oauth-authorization-server
+  - https://www.spocket.dev/.well-known/oauth-protected-resource
+note: >-
+  Derived by reading the provider's published auth documentation and the two live OAuth
+  discovery documents. No OpenAPI securitySchemes exist to derive from - Spocket publishes
+  no machine-readable spec - so derive-authentication.py has nothing to read.
+summary:
+  types: [oauth2]
+  api_key_in: []
+  oauth2_flows: [authorizationCode, clientCredentials]
+  api_key_supported: false
+  surfaces: 2
+schemes:
+  - name: MCPOAuth21
+    type: oauth2
+    surface: Spocket MCP Server
+    applies_to: https://www.spocket.dev/api/mcp
+    sources: [well-known/spocket-oauth-authorization-server.json, well-known/spocket-oauth-protected-resource.json]
+    flows:
+      - flow: authorizationCode
+        pkce: S256
+        authorizationUrl: https://www.spocket.dev/oauth/authorize
+        tokenUrl: https://www.spocket.dev/oauth/token
+        revocationUrl: https://www.spocket.dev/oauth/revoke
+        registrationUrl: https://www.spocket.dev/oauth/register
+        scopes:
+          spocket: Full access to the connected account's Spocket MCP tool surface
+    dynamic_client_registration: true      # RFC 7591
+    token_endpoint_auth_methods_supported: [none]
+    response_types_supported: [code]
+    bearer_methods_supported: [header]
+    consent: >-
+      The first tool call opens a browser for human consent; the client then holds the
+      token. There is no API key and nothing to paste.
+    revocation: >-
+      Every connected tool is listed in account Settings with its last-call time. Revoking
+      one takes effect on the next request and reconnecting requires approval again.
+    challenge:
+      observed_status: 401
+      www_authenticate: 'Bearer resource_metadata="https://www.spocket.dev/.well-known/oauth-protected-resource"'
+  - name: PlatformClientCredentials
+    type: oauth2
+    surface: Spocket Platform REST API
+    applies_to: https://www.spocket.dev/api/v1
+    sources: ['https://www.spocket.dev/documentation/platform-api']
+    flows:
+      - flow: clientCredentials
+        tokenUrl: https://www.spocket.dev/api/v1/token
+        scopes:
+          apps:read: List apps, read status and logs
+          apps:write: Provision, deploy, start, stop, restart
+          apps:delete: Delete apps
+          domains:write: Attach and verify custom domains
+    credential_shape:
+      client_id_env: SPOCKET_CLIENT_ID
+      client_id_prefix: spk_live_
+      client_secret_env: SPOCKET_CLIENT_SECRET
+      client_secret_prefix: sk_
+      storage: Secret is shown once at creation and stored only as a hash.
+    token:
+      type: bearer
+      in: header
+      header: authorization
+      lifetime: 3600            # documented as "tokens last an hour"
+    rotation: >-
+      Rotating a key keeps the old secret working for 24 hours so it can be rolled out
+      without taking customers offline.
+    availability:
+      gated: true
+      requirement: Paid Fleet plan - the key page unlocks once the account is on Fleet.
+    scope_selection: >-
+      Scopes are chosen at key creation, so a key that provisions and deploys need not be
+      able to delete.
+x-evidence:
+  fetched: '2026-08-09'
+  probed:
+    - url: https://www.spocket.dev/documentation/platform-api
+      status: 200
+    - url: https://www.spocket.dev/.well-known/oauth-authorization-server
+      status: 200
+    - url: https://www.spocket.dev/.well-known/oauth-protected-resource
+      status: 200
+    - url: https://www.spocket.dev/api/mcp
+      status: 401
+    - url: https://www.spocket.dev/.well-known/openid-configuration
+      status: 404

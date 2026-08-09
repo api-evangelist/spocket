@@ -1,0 +1,68 @@
+generated: '2026-08-09'
+method: searched
+source: https://www.spocket.dev/documentation/platform-api
+docs: https://www.spocket.dev/documentation/platform-api
+note: >-
+  Two independent OAuth surfaces with two independent scope vocabularies. The MCP scope
+  set comes from the live RFC 8414 authorization-server metadata; the Platform API scope
+  set comes from the provider's published scope table. Spocket publishes no OpenAPI, so
+  derive-oauth-scopes.py has no securitySchemes to read - these are searched, not derived.
+schemes:
+  - name: MCPOAuth21
+    source: well-known/spocket-oauth-authorization-server.json
+    surface: https://www.spocket.dev/api/mcp
+    flows:
+      - flow: authorizationCode
+        authorizationUrl: https://www.spocket.dev/oauth/authorize
+        tokenUrl: https://www.spocket.dev/oauth/token
+        code_challenge_methods_supported: [S256]
+  - name: PlatformClientCredentials
+    source: 'https://www.spocket.dev/documentation/platform-api'
+    surface: https://www.spocket.dev/api/v1
+    flows:
+      - flow: clientCredentials
+        tokenUrl: https://www.spocket.dev/api/v1/token
+scopes:
+  - scope: spocket
+    description: >-
+      The single coarse scope advertised by the MCP authorization server. All 20 MCP tools
+      are covered by it - the provider states no plan or tier gates a tool, and no
+      per-tool or read-only variant is published.
+    flows: [authorizationCode]
+    surface: mcp
+    sources: [well-known/spocket-oauth-authorization-server.json]
+  - scope: apps:read
+    description: List apps, read status and logs.
+    flows: [clientCredentials]
+    surface: platform-rest
+    sources: ['https://www.spocket.dev/documentation/platform-api']
+  - scope: apps:write
+    description: Provision, deploy, start, stop, restart.
+    flows: [clientCredentials]
+    surface: platform-rest
+    sources: ['https://www.spocket.dev/documentation/platform-api']
+  - scope: apps:delete
+    description: Delete apps.
+    flows: [clientCredentials]
+    surface: platform-rest
+    sources: ['https://www.spocket.dev/documentation/platform-api']
+  - scope: domains:write
+    description: Attach and verify custom domains.
+    flows: [clientCredentials]
+    surface: platform-rest
+    sources: ['https://www.spocket.dev/documentation/platform-api']
+observations:
+  - >-
+    domains:write is a published scope with no corresponding endpoint in the published
+    Platform API endpoint table - the capability is scoped but not documented.
+  - >-
+    The MCP surface has one scope covering every tool including the destructive
+    spocket_delete, so an MCP consent grant cannot be narrowed the way a Platform API key
+    can be at creation.
+x-evidence:
+  fetched: '2026-08-09'
+  probed:
+    - url: https://www.spocket.dev/.well-known/oauth-authorization-server
+      status: 200
+    - url: https://www.spocket.dev/documentation/platform-api
+      status: 200

@@ -1,0 +1,36 @@
+generated: '2026-08-09'
+method: generated
+source: >-
+  Grounded in the 20 MCP tool names published at
+  https://www.spocket.dev/documentation/mcp-tools and the 10 REST endpoints published at
+  https://www.spocket.dev/documentation/platform-api. Spocket publishes no OpenAPI, so
+  these skills are grounded in verified tool names and verified method+path rows rather
+  than in operationIds - none of which exist. No provider-published AGENTS.md or skill
+  file was found.
+skills:
+  - file: spocket-deploy-and-verify.md
+    name: Deploy an app to Spocket and verify it is healthy
+    api: mcp/spocket-mcp.yml
+    operations: [spocket_deploy, spocket_set_env, spocket_status, spocket_logs, spocket_urls]
+  - file: spocket-diagnose-and-recover.md
+    name: Diagnose a failing Spocket app and get it running again
+    api: mcp/spocket-mcp.yml
+    operations: [spocket_status, spocket_logs, spocket_search_logs, spocket_deploy, spocket_rollback, spocket_restart, spocket_migrate, spocket_nodes]
+  - file: spocket-custom-domain.md
+    name: Put a Spocket app on a custom domain
+    api: mcp/spocket-mcp.yml
+    operations: [spocket_urls, spocket_add_domain, spocket_verify_domain, spocket_remove_domain, spocket_status]
+  - file: spocket-reseller-provisioning.md
+    name: Provision hosting for your own customers over the Spocket Platform API
+    api: https://www.spocket.dev/api/v1
+    operations:
+      - 'POST /api/v1/token'
+      - 'POST /api/v1/apps'
+      - 'GET /api/v1/apps'
+      - 'GET /api/v1/apps/:id'
+      - 'POST /api/v1/apps/:id/power'
+      - 'GET /api/v1/apps/:id/logs'
+      - 'DELETE /api/v1/apps/:id'
+      - 'GET /api/v1/sub-accounts'
+      - 'POST /api/v1/sub-accounts'
+      - 'GET /api/v1/account'

@@ -1,0 +1,128 @@
+generated: '2026-08-09'
+method: searched
+status: published
+source: https://www.spocket.dev/documentation/mcp-tools
+server:
+  name: spocket
+  transport: http                       # Streamable HTTP
+  url: https://www.spocket.dev/api/mcp
+  documentation: https://www.spocket.dev/documentation/mcp-tools
+  landing: https://www.spocket.dev/mcp
+  install:
+    claude_code: claude mcp add --transport http spocket https://www.spocket.dev/api/mcp
+    claude_desktop: Settings -> Connectors -> Add custom connector (URL is the only field)
+    config_key_mcpServers: '{"mcpServers":{"spocket":{"type":"http","url":"https://www.spocket.dev/api/mcp"}}}'
+    notes: >-
+      Codex uses [mcp_servers.spocket] with url in ~/.codex/config.toml; Windsurf uses
+      serverUrl rather than url. The provider instructs clients to always use the www host —
+      the bare domain redirects and some clients do not follow redirects on discovery.
+authorization:
+  model: OAuth 2.1
+  pkce: S256
+  dynamic_client_registration: true     # RFC 7591
+  api_key: false
+  authorization_server: https://www.spocket.dev
+  authorization_endpoint: https://www.spocket.dev/oauth/authorize
+  token_endpoint: https://www.spocket.dev/oauth/token
+  registration_endpoint: https://www.spocket.dev/oauth/register
+  revocation_endpoint: https://www.spocket.dev/oauth/revoke
+  scopes_supported: [spocket]
+  discovery:
+    - well-known/spocket-oauth-authorization-server.json
+    - well-known/spocket-oauth-protected-resource.json
+introspection:
+  tools_list: gated
+  observed_status: 401
+  www_authenticate: 'Bearer resource_metadata="https://www.spocket.dev/.well-known/oauth-protected-resource"'
+  note: >-
+    An anonymous JSON-RPC tools/list against https://www.spocket.dev/api/mcp returns
+    401 {"error":"unauthorized"} with an RFC 9728 resource-metadata challenge, so the live
+    inputSchema for each tool requires an authenticated introspection. The tool names and
+    descriptions below are taken verbatim from the provider's published MCP tools reference
+    and llms.txt — they are NOT derived from a live tools/list response.
+tool_count: 20
+tools:
+  - name: spocket_deploy
+    description: Ship a folder. Same name means a new version.
+    category: deploy
+  - name: spocket_list
+    description: Every app with state, memory and uptime.
+    category: inventory
+  - name: spocket_status
+    description: One app in detail, including the live container state.
+    category: inventory
+  - name: spocket_logs
+    description: Recent output, up to 500 lines.
+    category: observability
+  - name: spocket_search_logs
+    description: Find lines matching a term, with context.
+    category: observability
+  - name: spocket_restart
+    description: Restart, or start if it is already down.
+    category: power
+  - name: spocket_stop
+    description: Stop without giving up the slot.
+    category: power
+  - name: spocket_start
+    description: Start a stopped app.
+    category: power
+  - name: spocket_set_env
+    description: Set or replace environment values.
+    category: configuration
+  - name: spocket_rollback
+    description: Return to an earlier version.
+    category: deploy
+  - name: spocket_migrate
+    description: Move an app to a different machine.
+    category: placement
+  - name: spocket_nodes
+    description: Which machines your apps are on.
+    category: placement
+  - name: spocket_account
+    description: Plan, slots used, trial status.
+    category: account
+  - name: spocket_customers
+    description: For resellers - each customer, their app count, and which apps are unhealthy.
+    category: reseller
+  - name: spocket_platform_usage
+    description: For resellers - apps against capacity, what is billed, and which API keys are live.
+    category: reseller
+  - name: spocket_urls
+    description: Every URL an app answers on - webhook and custom domains.
+    category: networking
+  - name: spocket_add_domain
+    description: Point your own domain at an app; returns the DNS to create.
+    category: networking
+  - name: spocket_verify_domain
+    description: Re-check DNS for a domain you added.
+    category: networking
+  - name: spocket_remove_domain
+    description: Detach a domain and release its certificate.
+    category: networking
+  - name: spocket_delete
+    description: Permanently delete an app. Asks you to confirm by name first.
+    category: destructive
+agent_boundaries:
+  # Published by the provider as hard limits on what a connected agent may do.
+  - cannot: Read an environment value back
+    note: Write-only, with no exception for automated callers.
+  - cannot: Delete an app
+    note: >-
+      Documented as a human decision in the panel; the spocket_delete tool exists and is
+      documented as confirming by name first. The docs and the tool reference state this
+      differently - treat deletion as human-confirmed.
+  - cannot: See anything about the machines beyond which ones your own apps are on
+    note: Not how many exist, nor how full they are.
+  - cannot: Choose which machine an app is deployed or moved to
+    note: Placement is a platform balancing decision.
+x-evidence:
+  fetched: '2026-08-09'
+  probed:
+    - url: https://www.spocket.dev/documentation/mcp-tools
+      status: 200
+    - url: https://www.spocket.dev/llms.txt
+      status: 200
+    - url: https://www.spocket.dev/api/mcp
+      status: 401
+      method: POST
+      note: JSON-RPC tools/list, anonymous

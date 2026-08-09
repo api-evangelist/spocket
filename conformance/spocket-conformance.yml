@@ -1,0 +1,83 @@
+generated: '2026-08-09'
+method: derived
+source: well-known/spocket-oauth-authorization-server.json + https://www.spocket.dev/documentation/platform-api
+note: >-
+  Derived from live discovery documents and the provider's published auth documentation.
+  No OpenAPI exists to derive spec-level conformance from.
+standards:
+  - id: oauth2
+    conforms: true
+    evidence: >-
+      Both surfaces are OAuth2 - authorization_code + PKCE for MCP, client_credentials for
+      the Platform REST API.
+  - id: oauth2.1-pkce
+    conforms: true
+    evidence: 'code_challenge_methods_supported: ["S256"] in the authorization-server metadata'
+  - id: rfc8414-authorization-server-metadata
+    conforms: true
+    evidence: https://www.spocket.dev/.well-known/oauth-authorization-server returns 200 application/json
+  - id: rfc9728-protected-resource-metadata
+    conforms: true
+    evidence: >-
+      https://www.spocket.dev/.well-known/oauth-protected-resource returns 200 and the
+      401 from /api/mcp carries WWW-Authenticate with resource_metadata
+  - id: rfc7591-dynamic-client-registration
+    conforms: true
+    evidence: 'registration_endpoint https://www.spocket.dev/oauth/register; docs state clients register themselves automatically'
+  - id: rfc7009-token-revocation
+    conforms: true
+    evidence: 'revocation_endpoint https://www.spocket.dev/oauth/revoke advertised in authorization-server metadata'
+  - id: mcp-streamable-http
+    conforms: true
+    evidence: 'Published as a Streamable HTTP MCP server at https://www.spocket.dev/api/mcp; anonymous JSON-RPC returns a spec-shaped 401 challenge'
+  - id: idempotency-key
+    conforms: true
+    evidence: 'Idempotency-Key request header documented on POST /api/v1/apps'
+  - id: llmstxt
+    conforms: true
+    evidence: https://www.spocket.dev/llms.txt returns 200 text/plain and follows the llms.txt shape
+  - id: openidconnect
+    conforms: false
+    evidence: /.well-known/openid-configuration returns 404; no OIDC surface published
+  - id: rfc9457-problem-details
+    conforms: false
+    evidence: 'Observed error body is {"error":"unauthorized"} with content-type application/json, not application/problem+json'
+  - id: rfc9116-security-txt
+    conforms: false
+    evidence: /.well-known/security.txt returns 404
+  - id: rfc9727-api-catalog
+    conforms: false
+    evidence: /.well-known/api-catalog returns 404
+  - id: openapi
+    conforms: false
+    evidence: No OpenAPI/Swagger document found at any conventional path on the API or docs host
+  - id: asyncapi
+    conforms: false
+    evidence: >-
+      No event or streaming surface is published. Spocket routes inbound HTTP to a
+      customer's own app; it emits no outbound webhooks of its own.
+  - id: a2a
+    conforms: false
+    evidence: /.well-known/agent-card.json and /.well-known/agent.json both return 404
+compliance_program:
+  published: false
+  certifications: []
+  note: >-
+    No trust center, compliance page, SOC 2 / ISO 27001 claim or DPA is published.
+    /security, /trust, /compliance and /dpa all return 404. The privacy policy and terms
+    are published; a named certification is not.
+x-evidence:
+  fetched: '2026-08-09'
+  probed:
+    - url: https://www.spocket.dev/.well-known/oauth-authorization-server
+      status: 200
+    - url: https://www.spocket.dev/.well-known/oauth-protected-resource
+      status: 200
+    - url: https://www.spocket.dev/.well-known/openid-configuration
+      status: 404
+    - url: https://www.spocket.dev/.well-known/security.txt
+      status: 404
+    - url: https://www.spocket.dev/trust
+      status: 404
+    - url: https://www.spocket.dev/compliance
+      status: 404

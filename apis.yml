@@ -4,8 +4,9 @@ description: >-
   and custom domains. Supports Discord/Slack/Telegram/Twitch bots, web apps/APIs, static sites, scrapers, queue
   consumers and cron jobs on Node 22 and Python 3.11. No CLI, Dockerfile, or YAML.
 url: https://spocket.apievangelist.com/apis.yml
+image: https://www.spocket.dev/brand/spocket-wordmark.png
 created: '2026-08-07'
-modified: '2026-08-07'
+modified: '2026-08-09'
 specificationVersion: '0.21'
 tags:
   - PaaS
@@ -38,7 +39,13 @@ apis:
     properties:
       - type: MCP
         url: https://www.spocket.dev/api/mcp
+      - type: MCPServer
+        url: mcp/spocket-mcp.yml
+      - type: ToolCrosswalk
+        url: mcp/spocket-tool-crosswalk.yml
       - type: Documentation
+        url: https://www.spocket.dev/documentation/mcp-tools
+      - type: APIReference
         url: https://www.spocket.dev/documentation/mcp-tools
       - type: LLMSTxt
         url: https://www.spocket.dev/llms.txt
@@ -62,11 +69,87 @@ apis:
     properties:
       - type: Documentation
         url: https://www.spocket.dev/documentation/platform-api
+      - type: APIReference
+        url: https://www.spocket.dev/documentation/platform-api
 maintainers:
   - FN: Spocket
+    email: support@spocket.dev
     url: https://www.spocket.dev
 generated:
   by: apis.io/add
   model: claude-opus-4-8
   confidence: 95
   at: '2026-08-07T13:16:36.489Z'
+common:
+- type: DomainSecurity
+  url: security/spocket-domain-security.yml
+- type: Website
+  url: https://www.spocket.dev
+- type: DeveloperPortal
+  url: https://www.spocket.dev/documentation
+- type: Documentation
+  url: https://www.spocket.dev/documentation
+- type: APIReference
+  url: https://www.spocket.dev/documentation/platform-api
+- type: GettingStarted
+  url: https://www.spocket.dev/documentation/quickstart
+- type: Support
+  url: mailto:support@spocket.dev
+- type: Blog
+  url: https://www.spocket.dev/blog
+- type: Pricing
+  url: https://www.spocket.dev/pricing
+- type: SignUp
+  url: https://www.spocket.dev/auth
+- type: TermsOfService
+  url: https://www.spocket.dev/terms
+- type: PrivacyPolicy
+  url: https://www.spocket.dev/privacy
+- type: StatusPage
+  url: https://www.spocket.dev/status
+- type: Lifecycle
+  url: lifecycle/spocket-lifecycle.yml
+- type: Authentication
+  url: authentication/spocket-authentication.yml
+- type: OAuthScopes
+  url: scopes/spocket-scopes.yml
+- type: Conventions
+  url: conventions/spocket-conventions.yml
+- type: Idempotency
+  url: conventions/spocket-conventions.yml
+- type: ErrorCatalog
+  url: errors/spocket-problem-types.yml
+- type: Conformance
+  url: conformance/spocket-conformance.yml
+- type: WellKnown
+  url: well-known/spocket-well-known.yml
+- type: LLMsTxt
+  url: llms/spocket-llms.txt
+- type: DataModel
+  url: data-model/spocket-data-model.yml
+- type: Plans
+  url: plans/spocket-plans-pricing.yml
+- type: AgentSkill
+  url: skills/_index.yml
+x-enrichment:
+  date: '2026-08-09'
+  status: enriched
+  artifacts_added: 19
+  pass: local-v1
+x-coverage:
+  state: covered
+  reason: null
+  detail: >-
+    Spocket publishes a live hosted MCP server, two OAuth discovery documents, a detailed
+    llms.txt and a prose Platform REST API reference - all machine-reachable. It publishes
+    no OpenAPI, so the contract-quality facet stays empty until it does.
+  evidence:
+    - url: https://www.spocket.dev/llms.txt
+      status: 200
+    - url: https://www.spocket.dev/.well-known/oauth-protected-resource
+      status: 200
+    - url: https://www.spocket.dev/api/mcp
+      status: 401
+    - url: https://www.spocket.dev/openapi.json
+      status: 404
+  checked: '2026-08-09'

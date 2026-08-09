@@ -1,0 +1,150 @@
+generated: '2026-08-09'
+method: derived
+source: https://www.spocket.dev/documentation/platform-api + https://www.spocket.dev/documentation/mcp-tools
+basis: >-
+  Derived from the resources named in the published Platform API endpoint table and the
+  MCP tool reference. Spocket publishes no OpenAPI, so there are no schemas or $refs to
+  walk - every entity and field below is named in the provider's own documentation. Field
+  types are not published and are therefore omitted rather than guessed.
+entities:
+  - name: account
+    endpoint: 'GET /api/v1/account'
+    description: The Spocket account. Carries plan, capacity, usage and app health.
+    fields_named_in_docs: [plan, slots_used, trial_status, capacity, usage, app_health]
+  - name: sub_account
+    endpoint: 'GET /api/v1/sub-accounts, POST /api/v1/sub-accounts'
+    description: >-
+      A reseller's own customer. Created ahead of provisioning or implicitly by passing
+      sub_account_ref; groups a customer's apps and keeps them apart from other customers'.
+    fields_named_in_docs: [sub_account_ref, app_count, unhealthy_app_count]
+  - name: app
+    endpoint: 'GET/POST /api/v1/apps, GET/DELETE /api/v1/apps/:id'
+    description: >-
+      A deployed unit - a static site, a web app or API, a bot, a worker, a scraper or a
+      cron job. Occupies one plan slot whether running or stopped.
+    fields_named_in_docs: [id, name, kind, runtime, sub_account_ref, state, memory, uptime, diagnosis]
+    enums:
+      kind: [sites, discord, slack, telegram, twitch, worker, scraper, cron, bot]
+      runtime: [node22, python311, static]
+      state: [running, starting, stopped, crashed, suspended]
+    naming_rule: lowercase letters, numbers and dashes
+  - name: version
+    endpoint: null
+    description: >-
+      A versioned archive of the files sent on one deploy. Every version is kept and can
+      be rolled back to; each has its own build log.
+    reachable_via: [spocket_deploy, spocket_rollback]
+    fields_named_in_docs: [version_number, build_log]
+  - name: file
+    endpoint: 'POST /api/v1/apps (files[])'
+    description: One file in a deploy payload.
+    fields_named_in_docs: [path, content]
+    notes: content is base64-encoded
+  - name: environment_variable
+    endpoint: null
+    description: >-
+      A write-only encrypted key/value applied to an app's machine. Cannot be read back
+      through the panel, the API or a connected agent - only replaced.
+    reachable_via: [spocket_set_env]
+    fields_named_in_docs: [name, value]
+  - name: domain
+    endpoint: null
+    description: >-
+      A customer-owned hostname attached to an app, with a certificate issued and renewed
+      by Spocket. Requires a routing record plus a TXT record at _spocket to verify.
+    reachable_via: [spocket_add_domain, spocket_verify_domain, spocket_remove_domain]
+    fields_named_in_docs: [hostname, dns_records, verified]
+  - name: url
+    endpoint: null
+    description: >-
+      An address an app answers on - the free <name>-<suffix>.spocket.dev hostname and the
+      path-based https://www.spocket.dev/hooks/<slug> webhook URL.
+    reachable_via: [spocket_urls]
+  - name: log
+    endpoint: 'GET /api/v1/apps/:id/logs'
+    description: >-
+      A rolling window of the app's output, sized by plan. Lines prefixed [spocket] are
+      platform lines; everything else is the app's own output.
+    reachable_via: [spocket_logs, spocket_search_logs]
+  - name: node
+    endpoint: null
+    description: >-
+      A machine an app runs on. An account can see which nodes its own apps are on and
+      request a move, but cannot see how many exist, how full they are, or choose one.
+    reachable_via: [spocket_nodes, spocket_migrate]
+  - name: platform_key
+    endpoint: null
+    description: >-
+      A Platform API credential pair (SPOCKET_CLIENT_ID / SPOCKET_CLIENT_SECRET) with
+      scopes chosen at creation. Secret shown once, stored hashed, 24h rotation overlap.
+    created_at: https://www.spocket.dev/platform
+    fields_named_in_docs: [client_id, client_secret, scopes]
+relationships:
+  - from: account
+    to: app
+    type: has_many
+    via: account
+  - from: account
+    to: sub_account
+    type: has_many
+    via: account
+  - from: account
+    to: platform_key
+    type: has_many
+    via: account
+  - from: sub_account
+    to: app
+    type: has_many
+    via: sub_account_ref
+  - from: app
+    to: sub_account
+    type: belongs_to
+    via: sub_account_ref
+  - from: app
+    to: version
+    type: has_many
+    via: app id
+  - from: version
+    to: file
+    type: has_many
+    via: files[]
+  - from: app
+    to: environment_variable
+    type: has_many
+    via: app id
+  - from: app
+    to: domain
+    type: has_many
+    via: app id
+  - from: app
+    to: url
+    type: has_many
+    via: app id
+  - from: app
+    to: log
+    type: has_one
+    via: app id
+  - from: app
+    to: node
+    type: belongs_to
+    via: placement (not selectable)
+identifiers:
+  platform_client_id_prefix: spk_live_
+  platform_client_secret_prefix: sk_
+  free_hostname_pattern: '<app-name>-<random-suffix>.spocket.dev'
+  webhook_url_pattern: 'https://www.spocket.dev/hooks/<slug>'
+  app_id_format: not published
+gaps:
+  - App, sub-account and log response schemas are not published in any form.
+  - >-
+    environment_variable, domain, version, url and node are reachable only through MCP
+    tools; they have no documented REST representation.
+x-evidence:
+  fetched: '2026-08-09'
+  probed:
+    - url: https://www.spocket.dev/documentation/platform-api
+      status: 200
+    - url: https://www.spocket.dev/documentation/mcp-tools
+      status: 200
+    - url: https://www.spocket.dev/documentation/runtimes
+      status: 200

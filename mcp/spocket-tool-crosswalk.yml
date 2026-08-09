@@ -1,0 +1,164 @@
+generated: '2026-08-09'
+method: derived
+source: mcp/spocket-mcp.yml + https://www.spocket.dev/documentation/platform-api
+basis: >-
+  Spocket publishes NO OpenAPI. The REST side of this crosswalk is bound to the
+  method+path rows in the provider's own Platform API endpoint table, not to
+  operationIds — there are none to bind to. Every REST row below appears verbatim in the
+  published endpoint table; nothing is inferred into existence. Confidence reflects how
+  cleanly the named MCP tool maps onto that documented endpoint.
+
+surfaces:
+  openapi:
+    present: false
+    note: >-
+      No OpenAPI/Swagger found at any of /openapi.json, /openapi.yaml, /swagger.json,
+      /api-docs, /api/openapi.json, /api/v1/openapi.json (all 404). The Platform API is
+      documented in prose + an endpoint table only.
+  graphql:
+    present: false
+  rest:
+    base_url: https://www.spocket.dev/api/v1
+    docs: https://www.spocket.dev/documentation/platform-api
+    auth: OAuth2 client_credentials (bearer, 1h token)
+    gated: true
+    gate: Paid Fleet plan required before a Platform API key can be created.
+  mcp:
+    url: https://www.spocket.dev/api/mcp
+    docs: https://www.spocket.dev/documentation/mcp-tools
+    auth: OAuth 2.1 + PKCE + RFC 7591 dynamic client registration
+    tools_list_gated: true
+    tools_list_status: 401
+
+crosswalk:
+  - tool: spocket_deploy
+    category: deploy
+    rest: ['POST /api/v1/apps']
+    binding: rest
+    confidence: high
+    note: >-
+      One call creates the app and deploys its first version, with base64 file contents.
+      Redeploying an existing app by name is documented for MCP but the REST table shows
+      no separate redeploy/version endpoint.
+  - tool: spocket_list
+    category: inventory
+    rest: ['GET /api/v1/apps']
+    binding: rest
+    confidence: high
+  - tool: spocket_status
+    category: inventory
+    rest: ['GET /api/v1/apps/:id']
+    binding: rest
+    confidence: high
+    note: Both surfaces return the plain-language diagnosis alongside container state.
+  - tool: spocket_logs
+    category: observability
+    rest: ['GET /api/v1/apps/:id/logs']
+    binding: rest
+    confidence: high
+  - tool: spocket_search_logs
+    category: observability
+    rest: ['GET /api/v1/apps/:id/logs']
+    binding: rest
+    confidence: low
+    note: >-
+      No search/filter query parameter is documented on the REST logs endpoint, so the
+      MCP tool's search-with-context behaviour may be server-side only.
+  - tool: spocket_restart
+    category: power
+    rest: ['POST /api/v1/apps/:id/power']
+    binding: rest
+    confidence: high
+    note: The power endpoint takes start, stop or restart.
+  - tool: spocket_stop
+    category: power
+    rest: ['POST /api/v1/apps/:id/power']
+    binding: rest
+    confidence: high
+  - tool: spocket_start
+    category: power
+    rest: ['POST /api/v1/apps/:id/power']
+    binding: rest
+    confidence: high
+  - tool: spocket_account
+    category: account
+    rest: ['GET /api/v1/account']
+    binding: rest
+    confidence: high
+  - tool: spocket_customers
+    category: reseller
+    rest: ['GET /api/v1/sub-accounts']
+    binding: rest
+    confidence: high
+    note: Documented as "your customers, with app counts" on both surfaces.
+  - tool: spocket_platform_usage
+    category: reseller
+    rest: ['GET /api/v1/account']
+    binding: rest
+    confidence: medium
+    note: >-
+      GET /api/v1/account is documented as capacity, usage and app health; the MCP tool
+      additionally reports which API keys are live, which has no documented REST endpoint.
+  - tool: spocket_delete
+    category: destructive
+    rest: ['DELETE /api/v1/apps/:id']
+    binding: rest
+    confidence: high
+    note: >-
+      Both are soft deletes - the app stops and billing stops, but nothing is destroyed
+      for seven days.
+
+mcp_only:
+  - tool: spocket_set_env
+    reason: >-
+      No environment-variable endpoint appears in the published Platform API endpoint
+      table. Values are write-only on both surfaces.
+  - tool: spocket_rollback
+    reason: No version/rollback endpoint is documented on the Platform API.
+  - tool: spocket_migrate
+    reason: No machine-migration endpoint is documented on the Platform API.
+  - tool: spocket_nodes
+    reason: No node/placement endpoint is documented on the Platform API.
+  - tool: spocket_urls
+    reason: No URL/networking endpoint is documented on the Platform API.
+  - tool: spocket_add_domain
+    reason: >-
+      No domain endpoint is in the published endpoint table, yet a domains:write scope
+      exists on Platform API keys - a documented scope with no documented endpoint. This
+      is a real gap in the provider's REST reference, not a tool that only MCP can reach.
+  - tool: spocket_verify_domain
+    reason: Same as spocket_add_domain - domains:write scope exists, endpoint undocumented.
+  - tool: spocket_remove_domain
+    reason: Same as spocket_add_domain - domains:write scope exists, endpoint undocumented.
+
+rest_only:
+  - rest: 'POST /api/v1/token'
+    capability: authentication
+    reason: >-
+      Client-credentials token exchange. MCP clients authenticate over OAuth 2.1 +
+      PKCE instead, so there is no equivalent tool.
+  - rest: 'POST /api/v1/sub-accounts'
+    capability: reseller
+    reason: >-
+      Create a sub-account ahead of provisioning. spocket_customers reads sub-accounts
+      but no tool creates one.
+
+coverage:
+  tools_named: 20
+  tools_bound_to_rest: 12
+  mcp_only: 8
+  rest_endpoints_documented: 10
+  rest_endpoints_with_a_tool: 8
+  openapi_operations: 0
+
+x-evidence:
+  fetched: '2026-08-09'
+  probed:
+    - url: https://www.spocket.dev/documentation/platform-api
+      status: 200
+    - url: https://www.spocket.dev/documentation/mcp-tools
+      status: 200
+    - url: https://www.spocket.dev/api/v1/openapi.json
+      status: 404
+    - url: https://www.spocket.dev/openapi.json
+      status: 404

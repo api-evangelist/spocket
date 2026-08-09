@@ -1,0 +1,122 @@
+generated: '2026-08-09'
+method: searched
+source: https://www.spocket.dev/documentation/platform-api
+docs:
+  - https://www.spocket.dev/documentation/platform-api
+  - https://www.spocket.dev/documentation/domains-and-webhooks
+  - https://www.spocket.dev/documentation/logs-and-status
+  - https://www.spocket.dev/llms.txt
+scope_note: >-
+  These conventions describe the Spocket Platform REST API (https://www.spocket.dev/api/v1).
+  The MCP server is a separate surface whose calling convention is JSON-RPC over Streamable
+  HTTP - see mcp/spocket-mcp.yml.
+
+authentication:
+  style: oauth2-client-credentials
+  header: 'authorization: Bearer <token>'
+  token_lifetime_seconds: 3600
+  exchange: 'POST /api/v1/token with grant_type=client_credentials'
+  rationale_published: >-
+    The provider documents exchanging the secret rather than sending it per request, so a
+    token that leaks into a log expires on its own.
+  see: authentication/spocket-authentication.yml
+
+idempotency:
+  supported: true
+  header: Idempotency-Key
+  documented_at: https://www.spocket.dev/documentation/platform-api
+  applies_to: ['POST /api/v1/apps']
+  semantics: >-
+    A retried call that carries the same key returns the app that was already created
+    rather than creating - and billing for - a second one.
+  retention: not published
+  evidence: >-
+    Published verbatim in the provisioning example as an "idempotency-key: $YOUR_REQUEST_ID"
+    request header, and restated in llms.txt.
+
+versioning:
+  scheme: uri-path
+  current: v1
+  base_url: https://www.spocket.dev/api/v1
+  change_policy: not published
+  deprecation_headers: not published
+
+pagination:
+  documented: false
+  note: >-
+    GET /api/v1/apps is documented as "optionally filtered by sub_account_ref". No page,
+    cursor, limit or offset parameter is published, and no pagination envelope is shown.
+
+tenancy:
+  field: sub_account_ref
+  semantics: >-
+    A reseller passes its own customer id on provisioning; apps carry that reference and
+    are grouped and kept apart from the reseller's other customers.
+  companion_endpoints: ['GET /api/v1/sub-accounts', 'POST /api/v1/sub-accounts']
+
+payloads:
+  content_type: application/json
+  file_transfer: >-
+    Application files are sent inline as files[] of {path, content}, where content is
+    base64-encoded. There is no multipart or presigned-upload path documented.
+
+error_envelope:
+  shape: '{"error": "<slug>"}'
+  observed: true
+  observed_at: 'POST https://www.spocket.dev/api/mcp (401)'
+  rfc9457: false
+  note: >-
+    The only error body observed anonymously is {"error":"unauthorized"} on the MCP
+    endpoint. The Platform API's error catalogue is not published; 401 responses carry an
+    RFC 9728 WWW-Authenticate resource-metadata challenge.
+  see: errors/spocket-problem-types.yml
+
+diagnostics:
+  field: diagnosis
+  semantics: >-
+    GET /api/v1/apps/:id returns a plain-language diagnosis alongside the status when the
+    platform can tell what went wrong - a missing package named, a rejected token, memory
+    exhausted. This is an unusual first-class convention: the API is designed to hand a
+    human-readable cause to a reseller's support flow.
+
+rate_limiting:
+  documented: false
+  note: >-
+    No rate-limit headers, quotas or 429 semantics are published for either surface.
+    Capacity is expressed as plan slots, not request rate.
+
+request_tracing:
+  request_id_header: not published
+
+soft_delete:
+  applies_to: ['DELETE /api/v1/apps/:id']
+  behaviour: >-
+    The app stops immediately and billing stops with it, but nothing is destroyed for
+    seven days, so an erroneous delete loop can be undone.
+
+inbound_http:
+  free_hostname: '<app-name>-<random-suffix>.spocket.dev'
+  path_url: 'https://www.spocket.dev/hooks/<slug>'
+  construct_hostname: false
+  note: >-
+    The suffix is random, so callers must read the URL from spocket_urls rather than
+    constructing it. Paths pass through unchanged; all methods are accepted; a request
+    waits up to 25 seconds before timing out.
+  domain_verification: TXT record at _spocket plus a routing record
+
+cross_links:
+  authentication: authentication/spocket-authentication.yml
+  scopes: scopes/spocket-scopes.yml
+  errors: errors/spocket-problem-types.yml
+  lifecycle: lifecycle/spocket-lifecycle.yml
+  mcp: mcp/spocket-mcp.yml
+
+x-evidence:
+  fetched: '2026-08-09'
+  probed:
+    - url: https://www.spocket.dev/documentation/platform-api
+      status: 200
+    - url: https://www.spocket.dev/documentation/domains-and-webhooks
+      status: 200
+    - url: https://www.spocket.dev/llms.txt
+      status: 200

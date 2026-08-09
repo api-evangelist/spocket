@@ -1,0 +1,1 @@
+{"resource":"https://www.spocket.dev/api/mcp","authorization_servers":["https://www.spocket.dev"],"scopes_supported":["spocket"],"bearer_methods_supported":["header"],"resource_name":"Spocket","resource_documentation":"https://www.spocket.dev/mcp"}

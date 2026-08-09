@@ -1,0 +1,82 @@
+generated: '2026-08-09'
+method: probed
+source: live probe of https://www.spocket.dev/api/mcp + https://www.spocket.dev/llms.txt
+format: vendor-json
+rfc9457: false
+envelope:
+  shape: '{"error": "<slug>"}'
+  content_type: application/json
+coverage_note: >-
+  Spocket publishes no error reference and no OpenAPI, so there are no 4xx/5xx response
+  definitions to derive from. This catalogue contains only errors that were either
+  observed on a live anonymous request or named verbatim in the provider's own
+  documentation. It is deliberately short - the gap is the provider's to close.
+problems:
+  - code: unauthorized
+    status: 401
+    title: Unauthorized
+    surface: https://www.spocket.dev/api/mcp
+    method: observed
+    body: '{"error":"unauthorized"}'
+    headers:
+      www-authenticate: 'Bearer resource_metadata="https://www.spocket.dev/.well-known/oauth-protected-resource"'
+    remediation: >-
+      Complete the OAuth 2.1 authorization-code + PKCE flow against
+      https://www.spocket.dev/oauth/authorize (clients may self-register at
+      /oauth/register) and present the bearer token.
+  - code: not_injected
+    status: unknown
+    title: Environment values not applied to this machine
+    surface: spocket_set_env (MCP)
+    method: documented
+    source: https://www.spocket.dev/llms.txt
+    meaning: >-
+      The app is running on a machine built before environment injection was supported.
+    remediation: >-
+      Deploy the app again to rebuild it. A restart alone will not pick the values up, and
+      migration is explicitly the wrong remedy - it moves the app to a different machine
+      and is for node failure, not configuration.
+documented_failure_states:
+  # Not API errors - the app-state vocabulary the status surfaces return.
+  source: https://www.spocket.dev/documentation/logs-and-status
+  states:
+    - state: running
+      means: The process is up.
+    - state: starting
+      means: Fetching, installing, or booting.
+    - state: stopped
+      means: Not running. Read the logs for why.
+    - state: crashed
+      means: Failed repeatedly; automatic restarts have been stopped (5 failures in 30 minutes).
+    - state: suspended (billing)
+      means: Paused for payment. Nothing has been deleted.
+documented_verification_failures:
+  # Custom-domain verification failure messages, published verbatim.
+  source: https://www.spocket.dev/documentation/domains-and-webhooks
+  cases:
+    - message: No TXT record found
+      means: Not propagated yet, or created under the wrong name - it belongs at _spocket, not the root.
+    - message: Found a TXT record, wrong value
+      means: Two records exist, or the old one was edited rather than replaced.
+    - message: Verified, but the site does not load
+      means: The routing record is missing or still points elsewhere; verification and routing are separate records.
+    - message: This domain is not connected
+      means: The domain resolves to Spocket but is not verified, or it was removed.
+gaps:
+  - >-
+    No error reference is published for the Platform REST API. None of the ten documented
+    endpoints publishes its failure modes, status codes or error codes.
+  - >-
+    Errors are not RFC 9457 problem+json, and carry no type URI, title or detail field.
+x-evidence:
+  fetched: '2026-08-09'
+  probed:
+    - url: https://www.spocket.dev/api/mcp
+      status: 401
+      method: POST
+    - url: https://www.spocket.dev/llms.txt
+      status: 200
+    - url: https://www.spocket.dev/documentation/logs-and-status
+      status: 200
+    - url: https://www.spocket.dev/documentation/domains-and-webhooks
+      status: 200

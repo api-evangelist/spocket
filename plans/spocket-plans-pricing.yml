@@ -1,0 +1,151 @@
+specification: API Commons Plans
+specificationVersion: '0.1'
+schema: https://raw.githubusercontent.com/api-evangelist/interface-research/main/schema/api-commons.yml#/$defs/Plans
+provider: Spocket
+providerId: spocket
+created: '2026-08-09'
+modified: '2026-08-09'
+generated: '2026-08-09'
+method: searched
+reconciled: true
+tags:
+  - PaaS
+  - application-hosting
+  - bot-hosting
+  - agent-infrastructure
+  - MCP
+description: >-
+  Spocket prices per app slot, not per request. Nothing is metered - no bandwidth line and
+  no request charge - and no tier gates a feature: all 20 MCP tools, both runtimes and a
+  free HTTPS subdomain are on every plan. Plans differ in how many apps run at once and
+  how much memory, disk and CPU each gets. A seven-day trial needs no card. Quarterly
+  billing saves 10% and yearly gives two months free. Resellers add apps beyond Fleet's 20
+  at a flat $2.45/app/month. The Platform REST API is available only on Fleet.
+sources:
+  - https://www.spocket.dev/pricing
+  - https://www.spocket.dev/documentation/runtimes
+  - https://www.spocket.dev/documentation/billing
+  - https://www.spocket.dev/documentation/platform-api
+plans:
+  - id: spocket-trial
+    name: Free trial
+    type: trial
+    description: Seven days, no card. Then $3 if kept.
+    entries:
+      - label: Trial period
+        name: trial_days
+        type: limit
+        metric: day
+        limit: 7
+        timeFrame: once
+        unit: 1
+        price: '0'
+        userMultiplied: false
+    elements:
+      - name: Memory per app — 384 MB
+      - name: Disk per app — 1 GB
+      - name: CPU per app — 40%
+      - name: Log window — 8 MB (about a day)
+      - name: No card required
+  - id: spocket-solo
+    name: Solo
+    type: subscription
+    description: One app, always on. For the thing you just built.
+    entries:
+      - label: Monthly subscription
+        name: solo_monthly
+        type: recurring
+        metric: month
+        limit: 1
+        timeFrame: month
+        unit: 1
+        price: '3.00'
+        currency: USD
+        userMultiplied: false
+    elements:
+      - name: Apps running at once — 1
+      - name: Memory per app — 512 MB
+      - name: Disk per app — 2 GB
+      - name: CPU per app — 50%
+      - name: Custom domains — 1
+      - name: Log window — 32 MB (about a week)
+      - name: Free HTTPS subdomain — name.spocket.dev
+      - name: All 20 MCP tools
+      - name: Rollback — every version kept
+  - id: spocket-builder
+    name: Builder
+    type: subscription
+    description: Five apps. The plan most accounts land on. Adds headless-browser capacity.
+    entries:
+      - label: Monthly subscription
+        name: builder_monthly
+        type: recurring
+        metric: month
+        limit: 5
+        timeFrame: month
+        unit: 1
+        price: '14.00'
+        currency: USD
+        userMultiplied: false
+    elements:
+      - name: Apps running at once — 5
+      - name: Memory per app — 768 MB
+      - name: Disk per app — 4 GB
+      - name: CPU per app — 75%
+      - name: Custom domains — 5
+      - name: Log window — 128 MB (about a month)
+      - name: Headless browsers (Puppeteer / Playwright)
+      - name: Support — tickets, answered by a person
+  - id: spocket-fleet
+    name: Fleet
+    type: subscription
+    description: >-
+      Twenty apps, unlimited custom domains, automatic rebuild elsewhere on machine
+      failure. The only plan on which the Platform REST API can be used.
+    entries:
+      - label: Monthly subscription
+        name: fleet_monthly
+        type: recurring
+        metric: month
+        limit: 20
+        timeFrame: month
+        unit: 1
+        price: '49.00'
+        currency: USD
+        userMultiplied: false
+      - label: Additional app beyond the included 20
+        name: fleet_overage_app
+        type: metered
+        metric: app
+        limit: -1
+        timeFrame: month
+        unit: 1
+        price: '2.45'
+        currency: USD
+        userMultiplied: false
+    elements:
+      - name: Apps running at once — 20
+      - name: Memory per app — 1 GB
+      - name: Disk per app — 8 GB
+      - name: CPU per app — 100%
+      - name: Custom domains — unlimited
+      - name: Log window — 512 MB (about three months)
+      - name: Platform REST API + scoped API keys
+      - name: Sub-accounts for reseller customers
+      - name: Rebuilt elsewhere automatically if a machine dies
+      - name: Support — direct line
+billing_notes:
+  - Billing is per slot, not per hour. A stopped app keeps its slot; deleting it frees the slot.
+  - If payment lapses apps pause rather than being deleted; paying rebuilds them from the exact version that was live.
+  - Provisioning and deleting adjust the app count immediately and the difference is prorated.
+  - Quarterly billing saves 10%; yearly gives two months free.
+  - Prices in USD; tax added at checkout where it applies.
+x-evidence:
+  fetched: '2026-08-09'
+  probed:
+    - url: https://www.spocket.dev/pricing
+      status: 200
+    - url: https://www.spocket.dev/documentation/runtimes
+      status: 200
+    - url: https://www.spocket.dev/documentation/platform-api
+      status: 200

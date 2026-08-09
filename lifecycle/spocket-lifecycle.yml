@@ -1,0 +1,82 @@
+generated: '2026-08-09'
+method: searched
+source: https://www.spocket.dev/status
+versioning:
+  scheme: uri-path
+  current: v1
+  base_url: https://www.spocket.dev/api/v1
+  docs: https://www.spocket.dev/documentation/platform-api
+deprecation:
+  policy_url: null
+  policy_published: false
+  sunset_header: unknown
+  note: >-
+    No deprecation or API versioning policy is published for either the Platform REST API
+    or the MCP tool surface. /changelog returns 404 and the sitemap lists no release-notes
+    page, so there is no dated record of tool or endpoint changes.
+status_page:
+  url: https://www.spocket.dev/status
+  hosted: first-party
+  check_interval: every minute
+  components:
+    - name: Deploys
+      description: Sending a folder and starting a container
+    - name: Running apps
+      description: Everything already deployed, and its traffic
+    - name: Panel and sign-in
+      description: spocket.dev, the dashboard and auth
+    - name: MCP server
+      description: What your editor connects to
+    - name: Custom domains
+      description: Certificates and DNS verification
+  machines_shown: [Fleet A, Fleet B]
+  incident_history: published (none recorded at time of probe)
+  note: >-
+    The status page reads the same health data the platform acts on rather than being
+    manually updated, and publishes per-machine last-answered timestamps.
+sla:
+  url: null
+  uptime_target: not published
+  note: >-
+    No SLA or uptime commitment is published. Availability is described behaviourally -
+    a crashed process restarts within a minute; five crashes in thirty minutes stops
+    retries and notifies; a failed machine is rebuilt elsewhere from the last deploy.
+retention:
+  app_versions: every deployed version is kept and can be rolled back to
+  deleted_apps_days: 7
+  suspended_on_nonpayment: >-
+    Apps pause rather than being deleted; paying rebuilds them from the exact version
+    that was live.
+  logs:
+    model: rolling window sized by plan, not an archive
+    windows:
+      - plan: Free trial
+        size: 8 MB
+        roughly: about a day
+      - plan: Solo
+        size: 32 MB
+        roughly: about a week
+      - plan: Builder
+        size: 128 MB
+        roughly: about a month
+      - plan: Fleet
+        size: 512 MB
+        roughly: about three months
+credential_lifecycle:
+  platform_key_rotation_overlap_hours: 24
+  mcp_token_revocation: >-
+    Connected tools are listed in Settings with last-call time; revocation takes effect on
+    the next request.
+  platform_token_lifetime_seconds: 3600
+deprecated_operations: []
+x-evidence:
+  fetched: '2026-08-09'
+  probed:
+    - url: https://www.spocket.dev/status
+      status: 200
+    - url: https://www.spocket.dev/changelog
+      status: 404
+    - url: https://www.spocket.dev/documentation/logs-and-status
+      status: 200
+    - url: https://www.spocket.dev/documentation/restarts-and-uptime
+      status: 200
