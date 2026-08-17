@@ -3,7 +3,7 @@ description: >-
   Agent-native deployment/hosting platform. An AI coding agent ships a folder over MCP and it runs 24/7 with HTTPS URLs
   and custom domains. Supports Discord/Slack/Telegram/Twitch bots, web apps/APIs, static sites, scrapers, queue
   consumers and cron jobs on Node 22 and Python 3.11. No CLI, Dockerfile, or YAML.
-url: https://spocket.apievangelist.com/apis.yml
+url: https://raw.githubusercontent.com/api-evangelist/spocket/refs/heads/main/apis.yml
 image: https://www.spocket.dev/brand/spocket-wordmark.png
 created: '2026-08-07'
 modified: '2026-08-09'
