@@ -7,7 +7,7 @@ url: https://raw.githubusercontent.com/api-evangelist/spocket/refs/heads/main/ap
 image: https://www.spocket.dev/brand/spocket-wordmark.png
 created: '2026-08-07'
 modified: '2026-08-09'
-specificationVersion: '0.21'
+specificationVersion: '0.23'
 tags:
   - PaaS
   - application-hosting
