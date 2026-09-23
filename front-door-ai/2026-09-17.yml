@@ -1,0 +1,29 @@
+# Front Door AI Index — spocket — 2026-09-17
+# AI vocabulary counted on the provider's root page. Generated; do not edit.
+# `score` is null unless ownership is `own` — see front_door_ai.py.
+front_door_ai:
+  slug: spocket
+  lexicon_version: '1.0'
+  probed_at: '2026-09-17'
+  host: www.spocket.dev
+  final_host: www.spockethosting.com
+  ownership: own
+  owner: spocket
+  shares_host_with: null
+  inherited_from: null
+  verdict: scored
+  score: 28
+  host_score: 28
+  density: 20.04
+  words: 1397
+  tiers:
+    agentic: 4
+    core: 4
+    model: 20
+  ambiguous: 7
+  top_terms:
+    Claude: 18
+    agent: 7
+    AI: 4
+    MCP: 4
+    ChatGPT: 2
